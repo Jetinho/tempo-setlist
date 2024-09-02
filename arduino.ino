@@ -1,33 +1,34 @@
-// SETUP: 3 buttons and 1 LED
-// 1 LCD screen
+// SETUP: 3 buttons
 
-#include <LiquidCrystal_I2C.h>
 #include <Wire.h>
 
-// Set the LCD address to 0x27 for a 16 chars and 2 line display
-LiquidCrystal_I2C lcd(0x27, 16, 2);
-
 //------------------WIRING------------------
-int anyButtonPin = 10; // detects button pressing from any of the 3 buttons.
-int pressLedPin = 9;   // pin of the button pressing witness ; the number of the LED positive pin (the longer one)
+int startStopButtonPin = 10; // detects button pressing from the start/stop button.
+int backButtonPin = 11;      // detects button pressing from the back button.
+int nextButtonPin = 12;      // detects button pressing from the next button.
+int buttonPressedLedPin = 9; // pin of the button pressing witness ; the number of the LED positive pin (the longer one)
 
 void setup()
 {
-  // initialize the LCD
-  lcd.init();
-
-  // Turn on the blacklight and print a message.
-  lcd.backlight();
-  lcd.print("LEON PAPA MAMAN!");
-
-  pinMode(anyButtonPin, INPUT); // set push button pin into input mode
-  pinMode(pressLedPin, OUTPUT); // set LED pin into output mode
+  Serial.begin(9600);
+  pinMode(startStopButtonPin, INPUT);   // set push button pin into input mode
+  pinMode(backButtonPin, INPUT);        // set push button pin into input mode
+  pinMode(nextButtonPin, INPUT);        // set push button pin into input mode
+  pinMode(buttonPressedLedPin, OUTPUT); // set LED pin into output mode
 }
 
 void loop()
 {
-  if (digitalRead(anyButtonPin) == HIGH) // if the button is not pressed
-    digitalWrite(pressLedPin, LOW);      // switch off LED
-  else                                   // if the button is pressed
-    digitalWrite(pressLedPin, HIGH);     // switch on LED
+  // SERIAL PRINT the value of startStopButtonPin, backButtonPin and nextButtonPin
+  static unsigned long lastPrintTime = 0;
+  if (millis() - lastPrintTime >= 500)
+  {
+    Serial.print("startStopButtonPin: ");
+    Serial.print(digitalRead(startStopButtonPin));
+    Serial.print(" backButtonPin: ");
+    Serial.print(digitalRead(backButtonPin));
+    Serial.print(" nextButtonPin: ");
+    Serial.println(digitalRead(nextButtonPin));
+    lastPrintTime = millis();
+  }
 }
