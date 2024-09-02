@@ -32,6 +32,15 @@ Song setlist[] = {
     {"Funkyla", 104},
     {"De boa", 98},
     {"Memento", 110}};
+// Will be used for other setlists
+// {"Sonido Picante", 121},
+// {"Zoukazeph", 97},
+// {"Orange Pressée", 110},
+// {"Blackan", 190},
+// {"Ouverture", 110},
+// {"Beehive", 116},
+// {"Moonwhale", 106},
+// {"Sirocco", 111}};
 
 // initialize song position, so that it is available when the loop starts
 int songIndex = -1;
