@@ -110,6 +110,7 @@ void handleNextButtonPress()
     {
       // wait for the button to be released
     }
+    Serial.println("Pressed next button ");
     displayData(songIndex);
     if (playing && songIndex >= 0)
     {
@@ -131,6 +132,7 @@ void handleBackButtonPress()
     {
       // wait for the button to be released
     }
+    Serial.println("Pressed back button ");
     displayData(songIndex);
     if (playing && songIndex >= 0)
     {
@@ -141,11 +143,16 @@ void handleBackButtonPress()
 
 void handleStartStopButtonPress()
 {
-  if (songIndex >= 0 && digitalRead(startStopButtonPin) == HIGH)
+  if (digitalRead(startStopButtonPin) == HIGH)
   {
     while (digitalRead(startStopButtonPin) == HIGH)
     {
       // wait for the button to be released
+    }
+    Serial.println("Pressed start/stop button ");
+    if (songIndex == -1)
+    {
+      return;
     }
     if (!playing)
     {
@@ -180,21 +187,6 @@ void blinkTempoLed()
   }
 }
 
-void printButtonStates()
-{
-  static unsigned long lastPrintTime = 0;
-  if (millis() - lastPrintTime >= 500)
-  {
-    Serial.print("startStopButtonPin: ");
-    Serial.print(digitalRead(startStopButtonPin));
-    Serial.print(" backButtonPin: ");
-    Serial.print(digitalRead(backButtonPin));
-    Serial.print(" nextButtonPin: ");
-    Serial.println(digitalRead(nextButtonPin));
-    lastPrintTime = millis();
-  }
-}
-
 void setup()
 {
   Serial.begin(9600);
@@ -208,5 +200,4 @@ void loop()
   handleBackButtonPress();
   handleStartStopButtonPress();
   blinkTempoLed();
-  printButtonStates();
 }
