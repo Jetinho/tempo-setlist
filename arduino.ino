@@ -14,10 +14,10 @@ const int nextButtonPin = 9;      // detects button pressing from the next butto
 const int tempoLedPin = 6;        // pin of the tempo LED ; the number of the LED positive pin (the longer one)
 
 // Song setlist as an array of dictionaries
-// Each dictionary contains the song position in the setlist, its name and its tempo
+// Each dictionary contains the song position in the setlist, its title and its tempo
 struct Song
 {
-  String name;
+  String title;
   int tempo;
 };
 
@@ -88,9 +88,9 @@ void printSong(int songIndex)
 {
   Song song = getSong(songIndex);
   int songPosition = songIndex + 1;
-  // On a single line, print the song position and name
+  // On a single line, print the song position and title
   // On a second line, print the song tempo
-  String songData = String(songPosition) + ". " + song.name;
+  String songData = String(songPosition) + ". " + song.title;
   String tempoData = String(song.tempo) + " BPM";
 
   Serial.println(songData + " " + tempoData);
@@ -162,13 +162,13 @@ void handleStartStopButtonPress()
       playing = true;
       updateTempo();
       Serial.print("Playing ");
-      Serial.println(getSong(songIndex).name);
+      Serial.println(getSong(songIndex).title);
     }
     else
     {
       playing = false;
       Serial.print("Stopped ");
-      Serial.println(getSong(songIndex).name);
+      Serial.println(getSong(songIndex).title);
       digitalWrite(tempoLedPin, LOW);
     }
   }
