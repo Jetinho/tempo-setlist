@@ -1,14 +1,17 @@
+#include <SD.h>
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+
+File myFile;
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
 
 //------------------WIRING------------------
-const int startStopButtonPin = 10; // detects button pressing from the start/stop button.
-const int backButtonPin = 11;      // detects button pressing from the back button.
-const int nextButtonPin = 12;      // detects button pressing from the next button.
-const int tempoLedPin = 9;         // pin of the tempo LED ; the number of the LED positive pin (the longer one)
+const int startStopButtonPin = 7; // detects button pressing from the start/stop button.
+const int backButtonPin = 8;      // detects button pressing from the back button.
+const int nextButtonPin = 9;      // detects button pressing from the next button.
+const int tempoLedPin = 6;        // pin of the tempo LED ; the number of the LED positive pin (the longer one)
 
 // Song setlist as an array of dictionaries
 // Each dictionary contains the song position in the setlist, its name and its tempo
@@ -190,14 +193,47 @@ void blinkTempoLed()
 void setup()
 {
   Serial.begin(9600);
-  initializeLCD();
-  initializePins();
+  Serial.print("Initializing SD card...");
+  // On the Ethernet Shield, CS is pin 4. It's set as an output by default.
+  // Note that even if it's not used as the CS pin, the hardware SS pin
+  // (10 on most Arduino boards, 53 on the Mega) must be left as an output
+  // or the SD library functions will not work.
+  pinMode(10, OUTPUT);
+
+  if (!SD.begin(10))
+  {
+    Serial.println("initialization failed!");
+    return;
+  }
+  Serial.println("initialization done.");
+
+  // open the file for reading:
+  myFile = SD.open("test.txt");
+  if (myFile)
+  {
+    Serial.println("test.txt:");
+
+    // read from the file until there's nothing else in it:
+    while (myFile.available())
+    {
+      Serial.write(myFile.read());
+    }
+    // close the file:
+    myFile.close();
+  }
+  else
+  {
+    // if the file didn't open, print an error:
+    Serial.println("error opening test.txt");
+  }
+  // initializeLCD();
+  // initializePins();
 }
 
 void loop()
 {
-  handleNextButtonPress();
-  handleBackButtonPress();
-  handleStartStopButtonPress();
-  blinkTempoLed();
+  // handleNextButtonPress();
+  // handleBackButtonPress();
+  // handleStartStopButtonPress();
+  // blinkTempoLed();
 }
