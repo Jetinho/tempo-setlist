@@ -16,36 +16,34 @@ struct Song
 {
   String title;
   int tempo;
+  int subDivisions;
 };
 
 Song setlist[] = {
-    {"Sirocco", 111},
-    {"Beehive", 116},
-    {"Tempete", 126},
-    {"Moonwhale", 106},
-    {"Ethiodream", 94},
-    {"Imago", 127},
-    {"Back in the Game", 117},
-    {"Karaba", 125},
-    {"Soul Remedy", 100},
-    {"Apuca", 130},
-    {"Funkyla", 104},
-    {"De boa", 98},
-    {"Memento", 110}};
-// Will be used for other setlists
-// {"Sonido Picante", 121},
-// {"Zoukazeph", 97},
-// {"Orange Pressée", 110},
-// {"Blackan", 190},
-// {"Ouverture", 110},
-// {"Beehive", 116},
-// {"Moonwhale", 106},
-// {"Sirocco", 111}};
+    {"Sirocco", 111, 4},
+    {"Beehive", 116, 4},
+    {"Tempete", 126, 4},
+    {"Moonwhale", 106, 4},
+    {"Ethiodream", 94, 4},
+    {"Imago", 127, 3},
+    {"Back in the Game", 117, 4},
+    {"Karaba", 125, 4},
+    {"Soul Remedy", 100, 4},
+    {"Apuca", 130, 4},
+    {"Funkyla", 104, 4},
+    {"De boa", 98, 4},
+    {"Memento", 110, 4},
+    {"Sonido Picante", 121, 4},
+    {"Zoukazeph", 97, 4},
+    {"Orange Pressée", 110, 4},
+    {"Blackan", 190, 4},
+    {"Ouverture", 110, 4}};
 
 // initialize song position, so that it is available when the loop starts
 int songIndex = -1;
 bool playing = false;
-unsigned long tempoLedBlinkInterval = 0;
+unsigned long ledOnInterval = 0;
+unsigned long ledOffInterval = 0;
 unsigned long lastTempoLedBlinkTime = 0;
 
 void initializeLCD()
@@ -174,16 +172,40 @@ void handleStartStopButtonPress()
 void updateTempo()
 {
   Song song = getSong(songIndex);
-  tempoLedBlinkInterval = 60000 / song.tempo / 2;
+  unsigned long totalInterval = 60000 / song.tempo;  // Total interval for one beat in milliseconds
+  ledOnInterval = totalInterval / song.subDivisions; // Interval for LED to be on
+  ledOffInterval = totalInterval - ledOnInterval;    // Interval for LED to be off
+
   lastTempoLedBlinkTime = millis();
 }
 
 void blinkTempoLed()
 {
-  if (playing && millis() - lastTempoLedBlinkTime >= tempoLedBlinkInterval)
+  static bool isLedOn = false;
+
+  if (playing)
   {
-    lastTempoLedBlinkTime = millis();
-    digitalWrite(tempoLedPin, !digitalRead(tempoLedPin));
+    unsigned long currentTime = millis();
+    if (isLedOn)
+    {
+      // LED is currently on
+      if (currentTime - lastTempoLedBlinkTime >= ledOnInterval)
+      {
+        isLedOn = false;
+        lastTempoLedBlinkTime = currentTime;
+        digitalWrite(tempoLedPin, LOW);
+      }
+    }
+    else
+    {
+      // LED is currently off
+      if (currentTime - lastTempoLedBlinkTime >= ledOffInterval)
+      {
+        isLedOn = true;
+        lastTempoLedBlinkTime = currentTime;
+        digitalWrite(tempoLedPin, HIGH);
+      }
+    }
   }
 }
 
