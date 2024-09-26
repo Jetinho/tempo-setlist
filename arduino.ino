@@ -36,7 +36,7 @@ Song setlist[] = {
     {"Sonido Picante", 121, 4},
     {"Zoukazeph", 97, 4},
     {"Orange Pressée", 110, 4},
-    {"Blackan", 190, 4},
+    {"Blackan", 190, 5},
     {"Ouverture", 110, 4}};
 
 // initialize song position, so that it is available when the loop starts
