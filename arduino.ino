@@ -42,6 +42,8 @@ bool playing = false;
 unsigned long ledOnInterval = 0;
 unsigned long ledOffInterval = 0;
 unsigned long lastTempoLedBlinkTime = 0;
+const unsigned long debounceDelay = 1000; // 1 second debounce delay
+unsigned long lastButtonPressTime = 0;
 
 void initializeLCD()
 {
@@ -94,8 +96,9 @@ void printSong(int songIndex)
 
 void handleNextButtonPress()
 {
-  if (digitalRead(nextButtonPin) == HIGH)
+  if (digitalRead(nextButtonPin) == HIGH && millis() - lastButtonPressTime >= debounceDelay)
   {
+    lastButtonPressTime = millis();
     songIndex++;
     if (songIndex >= sizeof(setlist) / sizeof(setlist[0]))
     {
@@ -116,8 +119,9 @@ void handleNextButtonPress()
 
 void handleBackButtonPress()
 {
-  if (digitalRead(backButtonPin) == HIGH)
+  if (digitalRead(backButtonPin) == HIGH && millis() - lastButtonPressTime >= debounceDelay)
   {
+    lastButtonPressTime = millis();
     songIndex--;
     if (songIndex < -1)
     {
@@ -138,8 +142,9 @@ void handleBackButtonPress()
 
 void handleStartStopButtonPress()
 {
-  if (digitalRead(startStopButtonPin) == HIGH)
+  if (digitalRead(startStopButtonPin) == HIGH && millis() - lastButtonPressTime >= debounceDelay)
   {
+    lastButtonPressTime = millis();
     while (digitalRead(startStopButtonPin) == HIGH)
     {
       // wait for the button to be released
