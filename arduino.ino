@@ -169,9 +169,9 @@ void handleStartStopButtonPress()
 void updateTempo()
 {
   Song song = getSong(songIndex);
-  unsigned long totalInterval = 60000 / song.tempo;  // Total interval for one beat in milliseconds
-  ledOnInterval = totalInterval / song.subDivisions; // Interval for LED to be on
-  ledOffInterval = totalInterval - ledOnInterval;    // Interval for LED to be off
+  unsigned long totalInterval = 60000 / song.tempo;      // Total interval for one beat in milliseconds
+  ledOnInterval = totalInterval / song.subDivisions / 2; // Interval for LED to be on
+  ledOffInterval = totalInterval - ledOnInterval;        // Interval for LED to be off
 
   lastTempoLedBlinkTime = millis();
 }
