@@ -22,22 +22,19 @@ struct Song
 Song setlist[] = {
     {"Sirocco", 111, 4},
     {"Beehive", 116, 4},
-    {"Tempete", 126, 4},
-    {"Moonwhale", 106, 4},
-    {"Ethiodream", 94, 4},
     {"Imago", 127, 3},
     {"Back in the Game", 117, 4},
     {"Karaba", 125, 4},
-    {"Soul Remedy", 100, 4},
-    {"Apuca", 130, 4},
+    {"Tempête", 126, 4},
+    {"Moonwhale", 106, 4},
+    {"Ethiodream", 94, 4},
     {"Funkyla", 104, 4},
+    {"Soul Remedy", 100, 4},
+    {"Ouverture", 110, 4},
+    {"Apuca", 130, 4},
     {"De boa", 98, 4},
     {"Memento", 110, 4},
-    {"Sonido Picante", 121, 4},
-    {"Zoukazeph", 97, 4},
-    {"Orange Pressée", 110, 4},
-    {"Blackan", 190, 5},
-    {"Ouverture", 110, 4}};
+    {"Sonido Picante", 121, 4}};
 
 // initialize song position, so that it is available when the loop starts
 int songIndex = -1;
