@@ -58,7 +58,7 @@ void setup()
     request->send(LittleFS, "/index.html", "text/html"); });
 
   // Define a route to serve the CSS file
-  server.on("/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
+  server.on("/css/style.css", HTTP_GET, [](AsyncWebServerRequest *request)
             {
     Serial.println("ESP32 Web Server: New request received:"); // for debugging
     Serial.println("GET /style.css");                          // for debugging
@@ -70,6 +70,20 @@ void setup()
     Serial.println("ESP32 Web Server: New request received:"); // for debugging
     Serial.println("GET /css/pico.amber.min.css");             // for debugging
     request->send(LittleFS, "/css/pico.amber.min.css", "text/css"); });
+
+  // Define a route to serve the setlist.json file
+  server.on("/data/setlist.json", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    Serial.println("ESP32 Web Server: New request received:"); // for debugging
+    Serial.println("GET data/setlist.json");                       // for debugging
+    request->send(LittleFS, "data/setlist.json", "application/json"); });
+
+  // Define a route to serve the JavaScript file
+  server.on("/js/script.js", HTTP_GET, [](AsyncWebServerRequest *request)
+            {
+    Serial.println("ESP32 Web Server: New request received:"); // for debugging
+    Serial.println("GET /js/script.js");                       // for debugging
+    request->send(LittleFS, "/js/script.js", "application/javascript"); });
 
   // Start the server
   server.begin();
