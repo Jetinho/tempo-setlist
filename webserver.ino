@@ -1,10 +1,6 @@
-/*********
-  Rui Santos
-  Complete project details at https://randomnerdtutorials.com
-*********/
-
 // Load Wi-Fi library
 #include <WiFi.h>
+#include "LittleFS.h"
 
 // Replace with your network credentials
 const char *ssid = "feather32";
@@ -26,6 +22,26 @@ const long timeoutTime = 2000;
 void setup()
 {
   Serial.begin(115200);
+
+  if (!LittleFS.begin())
+  {
+    Serial.println("An Error has occurred while mounting LittleFS");
+    return;
+  }
+
+  File file = LittleFS.open("/test_example.txt", "r");
+  if (!file)
+  {
+    Serial.println("Failed to open file for reading");
+    return;
+  }
+
+  Serial.println("File Content:");
+  while (file.available())
+  {
+    Serial.write(file.read());
+  }
+  file.close();
 
   Serial.println("\n[*] Creating AP");
   WiFi.mode(WIFI_AP);
