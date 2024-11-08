@@ -83,23 +83,21 @@ void loop()
             client.println("Connection: close");
             client.println();
 
-            // Display the HTML web page
-            client.println("<!DOCTYPE html><html>");
-            client.println("<head><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\">");
-            client.println("<link rel=\"icon\" href=\"data:,\">");
-            // CSS to style the on/off buttons
-            // Feel free to change the background-color and font-size attributes to fit your preferences
-            client.println("<style>html { font-family: Helvetica; display: inline-block; margin: 0px auto; text-align: center;}");
-            client.println(".button { background-color: #4CAF50; border: none; color: white; padding: 16px 40px;");
-            client.println("text-decoration: none; font-size: 30px; margin: 2px; cursor: pointer;}");
-            client.println(".button2 {background-color: #555555;}</style></head>");
+            // Read the content of index.html file
+            // split content into lines and print ln to client
+            File indexFile = LittleFS.open("/index.html", "r");
+            if (!indexFile)
+            {
+              Serial.println("Failed to open index.html for reading");
+              return;
+            }
 
-            // Web Page Heading
-            client.println("<body><h1>ESP32 Web Server</h1>");
-            client.println("<p>here is a random number");
-            client.println(random(100));
-
-            client.println("</p></body></html>");
+            while (indexFile.available())
+            {
+              String line = indexFile.readStringUntil('\n');
+              client.println(line);
+            }
+            indexFile.close();
 
             // The HTTP response ends with another blank line
             client.println();
