@@ -1,0 +1,12 @@
+summary {
+  display: inline-block;
+}
+
+input {
+  margin-bottom: 0 !important;
+}
+
+.fields-row {
+  display: flex;
+  gap: 1rem;
+}
