@@ -1,5 +1,6 @@
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+#include <EEPROM.h>
 
 // Set the LCD address to 0x27 for a 16 chars and 2 line display
 LiquidCrystal_I2C lcd(0x27, 16, 2);
@@ -14,27 +15,14 @@ const int tempoLedPin = 9;         // pin of the tempo LED ; the number of the L
 // Each dictionary contains the song position in the setlist, its title and its tempo
 struct Song
 {
-  String title;
+  char title[20];
   int tempo;
   int subDivisions;
+  int position;
 };
 
-Song setlist[] = {
-    {"Sirocco", 111, 4},
-    {"Beehive", 116, 4},
-    {"Imago", 127, 3},
-    {"Back in the Game", 117, 4},
-    {"Karaba", 125, 4},
-    {"Tempête", 126, 4},
-    {"Moonwhale", 106, 4},
-    {"Ethiodream", 94, 4},
-    {"Funkyla", 104, 4},
-    {"Soul Remedy", 100, 4},
-    {"Ouverture", 110, 4},
-    {"Apuca", 130, 4},
-    {"De boa", 98, 4},
-    {"Memento", 110, 4},
-    {"Sonido Picante", 121, 4}};
+const int setlistSize = 15;
+Song setlist[setlistSize];
 
 // initialize song position, so that it is available when the loop starts
 int songIndex = -1;
@@ -100,7 +88,7 @@ void handleNextButtonPress()
   {
     lastButtonPressTime = millis();
     songIndex++;
-    if (songIndex >= sizeof(setlist) / sizeof(setlist[0]))
+    if (songIndex >= setlistSize)
     {
       songIndex = -1;
     }
@@ -125,7 +113,7 @@ void handleBackButtonPress()
     songIndex--;
     if (songIndex < -1)
     {
-      songIndex = sizeof(setlist) / sizeof(setlist[0]) - 1;
+      songIndex = setlistSize - 1;
     }
     while (digitalRead(backButtonPin) == HIGH)
     {
@@ -211,11 +199,58 @@ void blinkTempoLed()
   }
 }
 
+void initializeSetlist()
+{
+  Song tempSetlist[setlistSize] = {
+      {"Sirocco", 111, 4, 1},
+      {"Beehive", 116, 4, 2},
+      {"Imago", 127, 3, 3},
+      {"Back in the Game", 117, 4, 4},
+      {"Karaba", 125, 4, 5},
+      {"Tempête", 126, 4, 6},
+      {"Moonwhale", 106, 4, 7},
+      {"Ethiodream", 94, 4, 8},
+      {"Funkyla", 104, 4, 9},
+      {"Soul Remedy", 100, 4, 10},
+      {"Ouverture", 110, 4, 11},
+      {"Apuca", 130, 4, 12},
+      {"De boa", 98, 4, 13},
+      {"Memento", 110, 4, 14},
+      {"Sonido Picante", 121, 4, 15}};
+  for (int i = 0; i < setlistSize; i++)
+  {
+    setlist[i] = tempSetlist[i];
+  }
+}
+
+void writeSetlistToEEPROM()
+{
+  int addr = 0;
+  for (int i = 0; i < setlistSize; i++)
+  {
+    EEPROM.put(addr, setlist[i]);
+    addr += sizeof(Song);
+  }
+}
+
+void readSetlistFromEEPROM()
+{
+  int addr = 0;
+  for (int i = 0; i < setlistSize; i++)
+  {
+    EEPROM.get(addr, setlist[i]);
+    addr += sizeof(Song);
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
   initializeLCD();
   initializePins();
+  initializeSetlist();
+  writeSetlistToEEPROM();
+  readSetlistFromEEPROM();
 }
 
 void loop()
