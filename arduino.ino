@@ -258,6 +258,7 @@ void listenForSerialInput()
 
     else if (input.startsWith("SETLIST-INPUT"))
     {
+      Serial.println("Waiting for setlist input from serial");
       int addr = 0;
       for (int i = 0; i < setlistSize; i++)
       {
