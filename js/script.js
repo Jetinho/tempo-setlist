@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', function () {
-  fetch('../data/setlist.json')
+  fetch('data/setlist.json')
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
