@@ -2,8 +2,15 @@ summary {
   display: inline-block;
 }
 
-input {
+input:not([type='submit']) {
   margin-bottom: 0 !important;
+}
+
+input[type='submit'] {
+  width: fit-content;
+  top: 40px;
+  right: 40px;
+  position: fixed;
 }
 
 .fields-row {

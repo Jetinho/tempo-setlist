@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then((response) => response.json())
     .then((data) => {
       console.log(data);
-      const form = document.createElement('form');
+      const form = document.getElementById('setlistForm');
       data.forEach((item) => {
         const details = document.createElement('details');
         const summary = document.createElement('summary');
