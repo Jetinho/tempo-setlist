@@ -243,6 +243,71 @@ void readSetlistFromEEPROM()
   }
 }
 
+void listenForSerialInput()
+{
+  if (Serial.available() > 0)
+  {
+    String input = Serial.readStringUntil('\n');
+    Serial.println("Incoming serial message: " + input);
+
+    if (input.startsWith("END-SETLIST-INPUT"))
+    {
+      Serial.println("Setlist updated from serial input.");
+      readSetlistFromEEPROM();
+    }
+
+    else if (input.startsWith("SETLIST-INPUT"))
+    {
+      int addr = 0;
+      for (int i = 0; i < setlistSize; i++)
+      {
+        while (Serial.available() == 0)
+        {
+          // Wait for the next part of the serial data
+        }
+        String songData = Serial.readStringUntil('\n');
+        if (songData.startsWith("END-SETLIST-INPUT"))
+        {
+          Serial.println("Setlist updated from serial input.");
+          readSetlistFromEEPROM();
+          break;
+        }
+
+        Serial.println("Reading song data from serial input");
+
+        int firstComma = songData.indexOf(',');
+        int secondComma = songData.indexOf(',', firstComma + 1);
+        int thirdComma = songData.indexOf(',', secondComma + 1);
+
+        // INPUT EXAMPLE: "Sirocco,222,4,1"
+
+        String title = songData.substring(0, firstComma);
+        int tempo = songData.substring(firstComma + 1, secondComma).toInt();
+        int subDivisions = songData.substring(secondComma + 1, thirdComma).toInt();
+        int position = songData.substring(thirdComma + 1).toInt();
+
+        Song song;
+        title.toCharArray(song.title, 20);
+        song.tempo = tempo;
+        song.subDivisions = subDivisions;
+        song.position = position;
+
+        Serial.print("Title: ");
+        Serial.print(song.title);
+        Serial.print(", Tempo: ");
+        Serial.print(song.tempo);
+        Serial.print(", SubDivisions: ");
+        Serial.print(song.subDivisions);
+        Serial.print(", Position: ");
+        Serial.println(song.position);
+
+        EEPROM.put(addr, song);
+        addr += sizeof(Song);
+      }
+    }
+  }
+}
+
 void setup()
 {
   Serial.begin(9600);
@@ -259,4 +324,5 @@ void loop()
   handleBackButtonPress();
   handleStartStopButtonPress();
   blinkTempoLed();
+  listenForSerialInput();
 }
