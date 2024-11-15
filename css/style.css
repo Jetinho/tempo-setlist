@@ -17,3 +17,17 @@ input[type='submit'] {
   display: flex;
   gap: 1rem;
 }
+
+.dragging {
+  opacity: 0.5;
+}
+
+.dropzone {
+  border: 2px dashed #ccc;
+  padding: 1rem;
+  transition: background-color 0.3s ease;
+}
+
+.dropzone.dragover {
+  background-color: #f0f0f0;
+}

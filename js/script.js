@@ -29,6 +29,9 @@ document.addEventListener('DOMContentLoaded', function () {
           if (['bpm', 'position', 'subdivision'].includes(key)) {
             input.type = 'number';
           }
+          if (key === 'position') {
+            input.readOnly = true;
+          }
           input.name = `setlist[${index}][${key}]`;
           input.value = item[key];
           box.appendChild(label);
@@ -37,7 +40,61 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         form.appendChild(details);
+        details.classList.add('draggable');
+        details.draggable = true;
+
+        details.addEventListener('dragstart', (e) => {
+          e.dataTransfer.setData('text/plain', index);
+          details.classList.add('dragging');
+        });
+
+        details.addEventListener('dragend', () => {
+          details.classList.remove('dragging');
+          updatePositions();
+          form.querySelectorAll('summary').forEach((summary) => {
+            summary.classList.remove('dropzone');
+          });
+        });
+
+        details.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          const draggingElement = document.querySelector('.dragging');
+          const currentElement = e.target.closest('details');
+          if (currentElement && currentElement !== draggingElement) {
+            const bounding = currentElement.getBoundingClientRect();
+            const offset = bounding.y + bounding.height / 2;
+            if (e.clientY - offset > 0) {
+              currentElement.after(draggingElement);
+            } else {
+              currentElement.before(draggingElement);
+            }
+          }
+        });
+
+        details.addEventListener('dragenter', (e) => {
+          const currentElement = e.target.closest('details');
+          if (currentElement) {
+            currentElement.querySelector('summary').classList.add('dropzone');
+          }
+        });
+
+        details.addEventListener('dragleave', (e) => {
+          const currentElement = e.target.closest('details');
+          if (currentElement) {
+            currentElement.querySelector('summary').classList.remove('dropzone');
+          }
+        });
       });
+
+      function updatePositions() {
+        const detailsElements = form.querySelectorAll('details');
+        detailsElements.forEach((details, newIndex) => {
+          const summary = details.querySelector('summary');
+          const positionInput = details.querySelector('input[name*="[position]"]');
+          summary.textContent = `${newIndex + 1} - ${summary.textContent.split(' - ')[1]}`;
+          positionInput.value = newIndex + 1;
+        });
+      }
       document.getElementById('setlist').appendChild(form);
     })
     .catch((error) => console.error('Error fetching setlist:', error));
