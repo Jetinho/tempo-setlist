@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', function () {
     .then((data) => {
       console.log(data);
       const form = document.getElementById('setlistForm');
-      data.forEach((item) => {
+      data.forEach((item, index) => {
         const details = document.createElement('details');
         const summary = document.createElement('summary');
 
@@ -23,11 +23,13 @@ document.addEventListener('DOMContentLoaded', function () {
           box.style.flexDirection = 'column';
           const label = document.createElement('label');
           label.textContent = key.charAt(0).toUpperCase() + key.slice(1);
+          label.htmlFor = `${key}-${index}`;
           const input = document.createElement('input');
+          input.id = `${key}-${index}`;
           if (['bpm', 'position', 'subdivision'].includes(key)) {
             input.type = 'number';
           }
-          input.name = key;
+          input.name = `setlist[${index}][${key}]`;
           input.value = item[key];
           box.appendChild(label);
           box.appendChild(input);
